@@ -69,3 +69,141 @@ S3： 最后求幂
     4 $ 2 $ 2
         =256
 ```
+
+## 题目 5
+空格处应填写（）。
+```C++
+#include <iostream>
+using namespace std;
+
+class A
+{
+    public:
+        int m;
+        int* p;
+};
+
+int main()
+{
+    A s;
+    s.m = 10;
+    cout<<s.m<<endl; //10
+    s.p = &s.m;
+    () = 5;
+    cout<<s.m<<endl; //5
+    return 0;
+}
+```
+
+### 正确答案及解析
+*(s.p) = 5
+
+## 题目 6
+下面程序的执行结果：
+```C++
+class A{
+    public:
+        long a;
+};
+class B : public A {
+    public:
+        long b;
+};
+void seta(A* data, int idx) {
+    data[idx].a = 2;
+}
+int main(int argc, char *argv[]) {
+    B data[4];
+    for(int i=0; i<4; ++i){
+        data[i].a = 1;
+        data[i].b = 1;
+        seta(data, i);
+    }
+    for(int i=0; i<4; ++i){
+         std::cout << data[i].a << data[i].b;
+    }
+    return 0;
+}
+```
+
+### 正确答案及解析
+22221111
+
+这道题应该注意 指针类型加减时步长的问题。
+
+A 大小为 4
+
+B 大小为 8
+
+那么：
+void seta(A* data, int idx) {
+    data[idx].a = 2;
+}
+
+由于传入的实参为 B 类型，大小为 8，而形参为 A 类型，大小为 4
+
+data[idx] 取 data + idx 处的元素，这时指针 data 加 1 的长度不是一个 B 长度，而是一个 A 长度，或者说是 1/2 个 B 长度。
+
+这时该函数中 data[0~3] 指向的是原 data[0].a,data[0].b,data[1].a,data[1].b,
+
+由于隐式类型转换的缘故，data[0].a, data[0].b, data[1].a, data[1].b 处的值全部由于 data[idx].a = 2; 操作变为 2。
+
+这道题如果改为void seta(B* data, int idx)，那么形参中 data 指针加1步长为 8，结果就是 21212121。但是由于步长为 4，所以结果就是 22221111。
+
+## 题目 7
+下列代码试图打印数字1-9的全排列组合。
+```C++
+#include "stdio.h"
+#define N 9
+int x[N];
+int count = 0;
+
+void dump() {
+  int i = 0;
+  for (i = 0; i < N; i++) {
+    printf("%d", x[i]);
+  }
+  printf("\n");
+}
+
+void swap(int a, int b) {
+  int t = x[a];
+  x[a] = x[b];
+  x[b] = t;
+}
+
+void run(int n) {
+  int i;
+  if (N - 1 == n) {
+    dump();
+    count ++;
+    return;
+  }
+  for (i = ___; i < N; i++) {
+    swap(___, i);
+    run(n + 1);
+    swap(___, i);
+  }
+}
+
+int main() {
+  int i;
+  for (i = 0; i < N; i++) {
+    x[i] = i + 1;
+  }
+  run(0);
+  printf("* Total: %d\n", count);
+}
+```
+其中 run 函数中缺失的部分应该依次为：
+
+### 正确答案及解析
+n, n, n
+
+这是一道分治算法题。这种循环套递归的题目是很难一下子理解的，因此可以把问题的规模减小。
+
+先试 3 个元素，然后我们发现，在循环里面第一句话是那当前的某个数和后面的某个数交换（包括和自己交换，也就是不交换），交换完了之后，后面那个递归就是分治了，也就是从待交换的数的下一个开始直到末尾的一段调用递归用分治搞定。
+
+分治一直调用到最后无法交换的时候，也就是末尾两个指针相遇的时候程序就输出一种排列。所以在递归退出之后，根据程序的逻辑，在当前层循环里面应该只负责当前数和后面的数的交换，而当前数不能变，所以要把现场恢复，因此还需要调用一次 swap 再交换回来就可以了。所以根据程序逻辑，应该选择 C 。自己画一个三个数的排列就可以看明白了， 9 个数太复杂，搞明白关系就可以了。
+
+## 题目 8
