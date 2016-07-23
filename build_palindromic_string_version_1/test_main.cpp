@@ -7,7 +7,7 @@
 #include <stdio.h>
 #include <string.h>
 
-#define MAX_LENGTH 1000
+#define MAX_LENGTH 1001
 
 char *strrev(char *s) {
     if (s == NULL || s[0] == '\0')
